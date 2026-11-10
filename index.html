@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CELLIÉR — Premium Wine &amp; Spirits</title>
+  <meta name="description" content="A premium wine and spirits store. Explore our curated collection of wines, whisky, vodka, rum, arrack, gin and craft beers." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===================================================
+       DESIGN TOKENS / CSS CUSTOM PROPERTIES
+       =================================================== */
+    :root {
+      --color-bg:        #0a0a0a;
+      --color-bg-alt:    #111111;
+      --color-surface:   #161616;
+      --color-border:    #222222;
+      --color-text:      #f5f0eb;
+      --color-text-dim:  #9a8e80;
+      --color-accent:    #c4a35a;
+      --color-accent-2:  #b87333;
+      --color-danger:    #cc3333;
+
+      --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+      --space-xs:  0.25rem;
+      --space-sm:  0.5rem;
+      --space-md:  1rem;
+      --space-lg:  2rem;
+      --space-xl:  4rem;
+      --space-2xl: 6rem;
+
+      --radius-sm:  4px;
+      --radius-md:  8px;
+      --radius-lg:  16px;
+      --radius-xl:  24px;
+
+      --transition-fast: 0.2s ease;
+      --transition-med:  0.4s ease;
+      --transition-slow: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+
+      --nav-height: 72px;
+      --showcase-height: 400vh;
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --nav-height: 60px;
+        --showcase-height: 300vh;
+      }
+    }
+
+    /* ===================================================
+       RESET & BASE
+       =================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: auto; /* we handle smooth scroll ourselves */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--color-bg);
+      color: var(--color-text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body.no-scroll { overflow: hidden; }
+
+    a { color: var(--color-accent); text-decoration: none; transition: color var(--transition-fast); }
+    a:hover { color: var(--color-text); }
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    img { display: block; max-width: 100%; height: auto; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    input { font-family: inherit; }
+
+    ::selection { background: var(--color-accent); color: var(--color-bg); }
+
+    /* ===================================================
+       TYPOGRAPHY
+       =================================================== */
+    .font-display { font-family: var(--font-display); }
+    h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height: 1.1; }
+
+    /* ===================================================
+       OVERLAYS: GRAIN & VIGNETTE
+       =================================================== */
+    #grain-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 9995; opacity: 0.04;
+    }
+    #grain-overlay filter { color-interpolation-filters: linearRGB; }
+
+    .vignette {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 9990;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+    }
+
+    /* ===================================================
+       NAVBAR
+       =================================================== */
+    .navbar {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
+      height: var(--nav-height);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 var(--space-lg);
+      transition: background var(--transition-med), backdrop-filter var(--transition-med), box-shadow var(--transition-med);
+    }
+    .navbar.scrolled {
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.4rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--color-accent);
+    }
+    .nav-links {
+      display: flex; gap: var(--space-lg); list-style: none; align-items: center;
+    }
+    .nav-links a {
+      font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--color-text-dim);
+      transition: color var(--transition-fast);
+      position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1px; background: var(--color-accent);
+      transition: width var(--transition-med);
+    }
+    .nav-links a:hover { color: var(--color-text); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .cart-btn {
+      position: relative; padding: var(--space-sm);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cart-btn svg { width: 22px; height: 22px; stroke: var(--color-text); fill: none; stroke-width: 1.5; }
+    .cart-count {
+      position: absolute; top: 0; right: -2px;
+      min-width: 18px; height: 18px;
+      background: var(--color-accent); color: var(--color-bg);
+      font-size: 0.65rem; font-weight: 700;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: scale(0); transition: all var(--transition-fast);
+    }
+    .cart-count.visible { opacity: 1; transform: scale(1); }
+
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      padding: var(--space-sm); cursor: pointer;
+    }
+    .nav-hamburger span {
+      width: 22px; height: 1.5px; background: var(--color-text);
+      transition: all var(--transition-fast);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-links.mobile-open {
+        display: flex; flex-direction: column;
+        position: absolute; top: var(--nav-height); left: 0; width: 100%;
+        background: rgba(10,10,10,0.97); backdrop-filter: blur(12px);
+        padding: var(--space-lg);
+        border-bottom: 1px solid var(--color-border);
+      }
+    }
+
+    /* ===================================================
+       HERO SECTION
+       =================================================== */
+    .hero {
+      position: relative; height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; z-index: 10;
+      background: radial-gradient(ellipse at 50% 80%, rgba(60,40,10,0.15) 0%, transparent 60%);
+    }
+    .hero-tag {
+      font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--color-accent); margin-bottom: var(--space-md);
+      opacity: 0; animation: fadeSlideUp 1s 0.3s forwards;
+    }
+    .hero-title {
+      font-size: clamp(2.5rem, 7vw, 6rem);
+      font-weight: 800; letter-spacing: -0.02em;
+      max-width: 900px; padding: 0 var(--space-lg);
+      opacity: 0; animation: fadeSlideUp 1s 0.5s forwards;
+    }
+    .hero-title em {
+      font-style: italic; color: var(--color-accent);
+    }
+    .hero-subtitle {
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+      color: var(--color-text-dim); max-width: 500px;
+      margin-top: var(--space-md); padding: 0 var(--space-lg);
+      opacity: 0; animation: fadeSlideUp 1s 0.7s forwards;
+    }
+    .scroll-indicator {
+      position: absolute; bottom: var(--space-xl);
+      display: flex; flex-direction: column; align-items: center; gap: var(--space-sm);
+      opacity: 0; animation: fadeSlideUp 1s 1s forwards;
+    }
+    .scroll-indicator span {
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--color-text-dim);
+    }
+    .scroll-arrow {
+      animation: bobUpDown 2s ease-in-out infinite;
+    }
+    .scroll-arrow svg { width: 20px; height: 20px; stroke: var(--color-accent); fill: none; stroke-width: 2; }
+
+    /* ===================================================
+       SHOWCASE (Scroll-driven 3D sections)
+       =================================================== */
+    .showcase {
+      position: relative;
+      height: var(--showcase-height);
+      z-index: 2;
+    }
+    .showcase-sticky {
+      position: sticky; top: 0;
+      height: 100vh; width: 100%;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .showcase-bg {
+      position: absolute; inset: 0;
+      transition: background 0.6s ease;
+      z-index: 0;
+    }
+    .showcase-glow {
+      position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 50vmin; height: 50vmin;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--glow-color, rgba(196,163,90,0.15)) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+      transition: --glow-color 0.6s ease;
+      filter: blur(40px);
+    }
+    .showcase-category-label {
+      position: absolute; top: var(--space-xl); left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-body);
+      font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--color-text-dim); z-index: 12;
+      padding-top: var(--nav-height);
+    }
+
+    /* Product text overlay */
+    .product-text {
+      position: absolute; z-index: 12;
+      pointer-events: none; width: 100%;
+      height: 100%; display: flex;
+      padding: 0 var(--space-lg);
+    }
+    .product-text-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; max-width: 1400px; margin: 0 auto;
+      padding-top: var(--nav-height);
+    }
+    .product-text-left, .product-text-right {
+      display: flex; flex-direction: column; gap: var(--space-sm);
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .product-text-left.visible, .product-text-right.visible {
+      opacity: 1; transform: translateY(0);
+    }
+    .product-text-left {
+      align-items: flex-start; text-align: left; max-width: 380px;
+    }
+    .product-text-right {
+      align-items: flex-end; text-align: right; max-width: 320px;
+    }
+    .pt-category {
+      font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--color-accent);
+    }
+    .pt-name {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      font-weight: 700; line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+    .pt-notes {
+      font-size: 0.9rem; color: var(--color-text-dim);
+      line-height: 1.6; max-width: 300px;
+    }
+    .pt-meta {
+      font-size: 0.8rem; color: var(--color-text-dim);
+      letter-spacing: 0.05em;
+    }
+    .pt-price {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 600; color: var(--color-accent);
+    }
+    .pt-add-btn {
+      margin-top: var(--space-sm);
+      padding: 0.6rem 1.6rem;
+      border: 1px solid var(--color-accent);
+      color: var(--color-accent);
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      transition: all var(--transition-fast);
+      pointer-events: auto; cursor: pointer;
+      background: transparent;
+    }
+    .pt-add-btn:hover {
+      background: var(--color-accent); color: var(--color-bg);
+    }
+
+    @media (max-width: 768px) {
+      .product-text-inner {
+        flex-direction: column; justify-content: flex-end;
+        padding-bottom: var(--space-xl); gap: var(--space-md);
+      }
+      .product-text-left, .product-text-right {
+        align-items: center; text-align: center; max-width: 100%;
+      }
+      .pt-name { font-size: clamp(1.4rem, 6vw, 2rem); }
+    }
+
+    /* ===================================================
+       THREE.JS CANVAS CONTAINER
+       =================================================== */
+    #three-container {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 5;
+      opacity: 0; transition: opacity 0.6s ease;
+    }
+    #three-container.visible { opacity: 1; }
+    #three-container canvas { display: block; width: 100%; height: 100%; }
+
+    /* WebGL fallback */
+    .webgl-fallback {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px; height: 300px;
+      opacity: 0.4;
+    }
+    .webgl-fallback .fallback-bottle {
+      width: 100%; height: 100%;
+      background: linear-gradient(to bottom,
+        transparent 0%, var(--color-accent) 8%, var(--color-accent) 12%, transparent 12%,
+        transparent 14%, rgba(255,255,255,0.08) 14%, rgba(255,255,255,0.08) 65%,
+        rgba(255,255,255,0.15) 65%, rgba(255,255,255,0.15) 68%,
+        rgba(255,255,255,0.08) 68%, rgba(255,255,255,0.04) 100%
+      );
+      border-radius: 8px 8px 50% 50% / 8px 8px 20% 20%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s ease;
+    }
+
+    /* ===================================================
+       COLLECTION SECTION
+       =================================================== */
+    .collection {
+      position: relative; z-index: 10;
+      padding: var(--space-2xl) var(--space-lg);
+      background: var(--color-bg);
+    }
+    .collection-header {
+      text-align: center; margin-bottom: var(--space-xl);
+    }
+    .collection-header h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin-bottom: var(--space-md);
+    }
+    .collection-header p {
+      color: var(--color-text-dim); max-width: 500px; margin: 0 auto;
+    }
+
+    /* Filter tabs */
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: var(--space-sm);
+      justify-content: center; margin-bottom: var(--space-lg);
+      align-items: center;
+    }
+    .filter-tab {
+      padding: 0.5rem 1.2rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--color-text-dim);
+      transition: all var(--transition-fast);
+      background: transparent; cursor: pointer;
+    }
+    .filter-tab:hover { border-color: var(--color-text-dim); color: var(--color-text); }
+    .filter-tab.active {
+      border-color: var(--color-accent); color: var(--color-accent);
+      background: rgba(196,163,90,0.08);
+    }
+    .search-input {
+      padding: 0.5rem 1.2rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      background: transparent; color: var(--color-text);
+      font-size: 0.85rem; width: 200px;
+      transition: border-color var(--transition-fast);
+    }
+    .search-input::placeholder { color: var(--color-text-dim); opacity: 0.6; }
+    .search-input:focus { border-color: var(--color-accent); }
+
+    /* Product grid */
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-lg);
+      max-width: 1400px; margin: 0 auto;
+    }
+
+    /* Product cards */
+    .product-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .product-card:hover {
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(196,163,90,0.15);
+    }
+    .card-visual {
+      height: 200px; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .card-bottle-icon {
+      width: 50px; height: 140px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0.6;
+    }
+    .card-bottle-icon svg { width: 100%; height: 100%; }
+    .card-info {
+      padding: var(--space-md) var(--space-lg) var(--space-lg);
+      display: flex; flex-direction: column; gap: var(--space-xs);
+    }
+    .card-category {
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--color-accent);
+    }
+    .card-name {
+      font-family: var(--font-display);
+      font-size: 1.15rem; font-weight: 600;
+    }
+    .card-notes {
+      font-size: 0.8rem; color: var(--color-text-dim);
+      line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: var(--space-xs);
+      font-size: 0.75rem; color: var(--color-text-dim);
+    }
+    .card-price {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 600; color: var(--color-accent);
+    }
+    .add-to-cart-btn {
+      margin-top: var(--space-sm);
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--color-text);
+      transition: all var(--transition-fast);
+      width: 100%; text-align: center;
+      background: transparent; cursor: pointer;
+    }
+    .add-to-cart-btn:hover {
+      border-color: var(--color-accent); color: var(--color-accent);
+      background: rgba(196,163,90,0.06);
+    }
+
+    /* ===================================================
+       CART DRAWER
+       =================================================== */
+    .cart-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--transition-med);
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .cart-drawer {
+      position: fixed; top: 0; right: 0;
+      width: min(420px, 90vw); height: 100%;
+      background: var(--color-surface);
+      border-left: 1px solid var(--color-border);
+      z-index: 110;
+      transform: translateX(100%);
+      transition: transform var(--transition-slow);
+      display: flex; flex-direction: column;
+    }
+    .cart-drawer.open { transform: translateX(0); }
+
+    .cart-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-lg);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .cart-header h3 { font-size: 1.3rem; }
+    .cart-close-btn { padding: var(--space-sm); }
+    .cart-close-btn svg { width: 20px; height: 20px; stroke: var(--color-text); fill: none; stroke-width: 2; }
+
+    .cart-items {
+      flex: 1; overflow-y: auto; padding: var(--space-md) var(--space-lg);
+      display: flex; flex-direction: column; gap: var(--space-md);
+    }
+    .cart-empty {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-dim); font-size: 0.9rem;
+    }
+    .cart-item {
+      display: flex; gap: var(--space-md); align-items: center;
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .cart-item-color {
+      width: 48px; height: 48px; border-radius: var(--radius-md);
+      flex-shrink: 0;
+    }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; }
+    .cart-item-price { font-size: 0.8rem; color: var(--color-accent); }
+    .cart-item-qty {
+      display: flex; align-items: center; gap: var(--space-sm);
+    }
+    .qty-btn {
+      width: 28px; height: 28px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; color: var(--color-text);
+      transition: all var(--transition-fast);
+    }
+    .qty-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .qty-num { font-size: 0.85rem; min-width: 24px; text-align: center; }
+
+    .cart-footer {
+      padding: var(--space-lg);
+      border-top: 1px solid var(--color-border);
+    }
+    .cart-total {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: var(--space-md);
+    }
+    .cart-total-label { font-size: 0.9rem; color: var(--color-text-dim); }
+    .cart-total-value {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 700; color: var(--color-accent);
+    }
+    .cart-checkout-btn {
+      width: 100%; padding: 0.9rem;
+      background: var(--color-accent); color: var(--color-bg);
+      font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+      border: none; cursor: pointer;
+    }
+    .cart-checkout-btn:hover { background: #d4b36a; }
+
+    /* ===================================================
+       FOOTER
+       =================================================== */
+    .footer {
+      position: relative; z-index: 10;
+      background: var(--color-bg);
+      border-top: 1px solid var(--color-border);
+      padding: var(--space-2xl) var(--space-lg) var(--space-lg);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-xl);
+      max-width: 1200px; margin: 0 auto;
+    }
+    .footer-col h4 {
+      font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--color-accent); margin-bottom: var(--space-md);
+    }
+    .footer-col p, .footer-col li {
+      font-size: 0.85rem; color: var(--color-text-dim); line-height: 2;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col a { color: var(--color-text-dim); }
+    .footer-col a:hover { color: var(--color-accent); }
+
+    .whatsapp-btn {
+      display: inline-flex; align-items: center; gap: var(--space-sm);
+      padding: 0.7rem 1.4rem; margin-top: var(--space-md);
+      background: #25D366; color: #fff;
+      border-radius: var(--radius-md);
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.04em;
+      transition: background var(--transition-fast);
+    }
+    .whatsapp-btn:hover { background: #1DA851; color: #fff; }
+    .whatsapp-btn svg { width: 18px; height: 18px; fill: #fff; }
+
+    .footer-bottom {
+      max-width: 1200px; margin: var(--space-xl) auto 0;
+      padding-top: var(--space-lg);
+      border-top: 1px solid var(--color-border);
+      display: flex; flex-wrap: wrap; justify-content: space-between;
+      align-items: center; gap: var(--space-md);
+    }
+    .footer-legal {
+      font-size: 0.75rem; color: var(--color-text-dim);
+    }
+    .footer-age-notice {
+      display: inline-flex; align-items: center; gap: var(--space-sm);
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--color-danger);
+      border-radius: var(--radius-md);
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--color-danger);
+      letter-spacing: 0.06em;
+    }
+
+    /* ===================================================
+       AGE GATE MODAL
+       =================================================== */
+    .age-gate {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(5,5,5,0.97);
+      backdrop-filter: blur(20px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--transition-med);
+    }
+    .age-gate.active { opacity: 1; pointer-events: auto; }
+
+    .age-gate-card {
+      text-align: center; max-width: 440px;
+      padding: var(--space-xl);
+    }
+    .age-gate-icon {
+      font-size: 3rem; margin-bottom: var(--space-md);
+      color: var(--color-accent);
+    }
+    .age-gate-card h2 {
+      font-size: 1.8rem; margin-bottom: var(--space-sm);
+    }
+    .age-gate-card p {
+      color: var(--color-text-dim); margin-bottom: var(--space-lg);
+      font-size: 0.9rem;
+    }
+    .age-gate-buttons {
+      display: flex; gap: var(--space-md); justify-content: center;
+    }
+    .age-btn {
+      padding: 0.8rem 2.5rem;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+    .age-btn-yes {
+      background: var(--color-accent); color: var(--color-bg);
+      border: 2px solid var(--color-accent);
+    }
+    .age-btn-yes:hover { background: #d4b36a; border-color: #d4b36a; }
+    .age-btn-no {
+      background: transparent; color: var(--color-text-dim);
+      border: 2px solid var(--color-border);
+    }
+    .age-btn-no:hover { border-color: var(--color-text-dim); color: var(--color-text); }
+
+    /* ===================================================
+       ANIMATIONS
+       =================================================== */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bobUpDown {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(8px); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.5; }
+    }
+
+    /* ===================================================
+       REDUCED MOTION
+       =================================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+      .scroll-arrow { animation: none; }
+    }
+
+    /* ===================================================
+       PRINT
+       =================================================== */
+    @media print {
+      .navbar, .cart-drawer, .cart-overlay, .age-gate,
+      #three-container, #grain-overlay, .vignette,
+      .scroll-indicator { display: none !important; }
+      body { background: #fff; color: #000; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ========== GRAIN OVERLAY (SVG noise) ========== -->
+  <svg id="grain-overlay" aria-hidden="true">
+    <filter id="grain-filter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+      <feColorMatrix type="saturate" values="0" />
+    </filter>
+    <rect width="100%" height="100%" filter="url(#grain-filter)" />
+  </svg>
+
+  <!-- ========== VIGNETTE ========== -->
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- ========== AGE GATE MODAL ========== -->
+  <div id="age-gate" class="age-gate" role="dialog" aria-modal="true" aria-labelledby="age-gate-title">
+    <div class="age-gate-card">
+      <div class="age-gate-icon" aria-hidden="true">&#127863;</div>
+      <h2 id="age-gate-title">Age Verification</h2>
+      <p>You must be 21 years or older to enter this site. By entering, you confirm that you are of legal drinking age in your country.</p>
+      <div class="age-gate-buttons">
+        <button class="age-btn age-btn-yes" onclick="verifyAge(true)" aria-label="I am 21 or older">I'm 21+</button>
+        <button class="age-btn age-btn-no" onclick="verifyAge(false)" aria-label="I am under 21">Under 21</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+    <a href="#" class="nav-logo" aria-label="CELLIÉR home">CELLIÉR</a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#showcase-walker">Johnnie Walker</a></li>
+      <li><a href="#showcase-beers">Chilled Beers</a></li>
+      <li><a href="#collection">Collection</a></li>
+      <li><a href="#footer-contact">Contact</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <button class="cart-btn" onclick="toggleCart()" aria-label="Shopping cart">
+        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
+        <span class="cart-count" id="cart-count" aria-live="polite">0</span>
+      </button>
+      <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileNav()" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========== THREE.JS CANVAS ========== -->
+  <div id="three-container" aria-hidden="true"></div>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero" id="hero">
+    <span class="hero-tag">Est. 2024 &bull; Premium Spirits &amp; Wine</span>
+    <h1 class="hero-title font-display">Discover the Art of <em>Fine Spirits</em></h1>
+    <p class="hero-subtitle">Scroll through our curated collection. Every bottle tells a story.</p>
+    <div class="scroll-indicator" aria-hidden="true">
+      <span>Scroll to Explore</span>
+      <div class="scroll-arrow">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9" /></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SHOWCASE 0: JOHNNIE WALKER ========== -->
+  <section class="showcase" id="showcase-walker" data-showcase-index="0" aria-label="Johnnie Walker showcase">
+    <div class="showcase-sticky">
+      <div class="showcase-bg" id="showcase-bg-0"></div>
+      <div class="showcase-glow" id="showcase-glow-0"></div>
+      <div class="showcase-category-label">The House of Walker</div>
+      <div class="product-text" id="product-text-0"></div>
+    </div>
+  </section>
+
+  <!-- ========== SHOWCASE 1: CHILLED BEERS ========== -->
+  <section class="showcase" id="showcase-beers" data-showcase-index="1" aria-label="Beers showcase">
+    <div class="showcase-sticky">
+      <div class="showcase-bg" id="showcase-bg-1"></div>
+      <div class="showcase-glow" id="showcase-glow-1"></div>
+      <div class="showcase-category-label">Chilled Draught & Cold Cans</div>
+      <div class="product-text" id="product-text-1"></div>
+    </div>
+  </section>
+
+  <!-- ========== FULL COLLECTION ========== -->
+  <section class="collection" id="collection" aria-label="Full product collection">
+    <div class="collection-header">
+      <h2 class="font-display">Full Collection</h2>
+      <p>Browse our complete selection of wines, spirits and beers.</p>
+    </div>
+    <div class="filter-bar" id="filter-bar" role="tablist" aria-label="Filter products by category"></div>
+    <div class="collection-grid" id="collection-grid" role="list"></div>
+  </section>
+
+  <!-- ========== CART DRAWER ========== -->
+  <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+  <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Shopping cart">
+    <div class="cart-header">
+      <h3 class="font-display">Your Cart</h3>
+      <button class="cart-close-btn" onclick="toggleCart()" aria-label="Close cart">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+      </button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-footer" id="cart-footer"></div>
+  </aside>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer" id="footer-contact">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Visit Us</h4>
+        <p>123 Wine Street<br />Colombo 07, Sri Lanka</p>
+        <p style="margin-top:0.5rem;">Mon – Sat: 10 AM – 10 PM<br />Sun: 12 PM – 8 PM</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#showcase-wines">Wines</a></li>
+          <li><a href="#showcase-spirits">Spirits</a></li>
+          <li><a href="#showcase-beers">Beers</a></li>
+          <li><a href="#collection">Full Collection</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <p>+94 11 234 5678<br />hello@cellier.lk</p>
+        <a href="https://wa.me/94112345678" target="_blank" rel="noopener noreferrer" class="whatsapp-btn" aria-label="Order via WhatsApp">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+          Order via WhatsApp
+        </a>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <p>A premium wine and spirits retailer bringing the world's finest bottles to Sri Lanka.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-legal">&copy; 2024 CELLIÉR. All rights reserved.</span>
+      <span class="footer-age-notice" aria-label="This website sells alcohol. You must be 21 or older.">&#9888; 21+ Only &mdash; Drink Responsibly</span>
+    </div>
+  </footer>
+
+  <!-- ========== THREE.JS (CDN, pinned r128) ========== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+  /* ==========================================================================
+     WINESTORE — COMPLETE CLIENT-SIDE APPLICATION
+     ==========================================================================
+     All product data, 3D rendering, scroll mechanics, cart, and UI logic
+     are contained in this single script block.
+     ========================================================================== */
+
+
+  /* ============================================
+     1. PRODUCT DATA
+     ============================================ */
+  const PRODUCTS = [
+    /* ---- THE HOUSE OF WALKER (JOHNNIE WALKER COLLECTION) ---- */
+    { id:101, brand:"Johnnie Walker", name:"Johnnie Walker Black Label 12", category:"Whisky", sub:"12 Year Old Blended Scotch", abv:"40%", volume:"750ml", price:17950,
+      notes:"The benchmark of luxury blended scotch, aged 12 years. Rich dark fruits, sweet creamy vanilla, and signature peat smoke.",
+      accentColor:"#d4af37", bgFrom:"#0c0c0c", bgTo:"#281f08",
+      labelColor:"#18181b", glassColor:"#92400e", shape:"spirit" },
+    { id:102, brand:"Johnnie Walker", name:"Johnnie Walker Gold Label Reserve", category:"Whisky", sub:"Celebration Blended Scotch", abv:"40%", volume:"750ml", price:36800,
+      notes:"Opulent Speyside honey, glazed orchard fruit, velvety marzipan, and delicate lingering sweet wood smoke.",
+      accentColor:"#facc15", bgFrom:"#171203", bgTo:"#423207",
+      labelColor:"#facc15", glassColor:"#b45309", shape:"spirit" },
+    { id:103, brand:"Johnnie Walker", name:"Johnnie Walker Blue Label", category:"Whisky", sub:"Prestige Rare Cask Blend", abv:"40%", volume:"750ml", price:140300,
+      notes:"Scotland's rarest casks, where only 1 in 10,000 qualifies. Hazelnut, dark chocolate, ginger spice, and rich floral smoke.",
+      accentColor:"#3b82f6", bgFrom:"#050e24", bgTo:"#0e2963",
+      labelColor:"#1e3a8a", glassColor:"#1e40af", shape:"spirit" },
+    { id:104, brand:"Johnnie Walker", name:"Johnnie Walker Double Black", category:"Whisky", sub:"Intense Smoky Scotch", abv:"40%", volume:"750ml", price:27150,
+      notes:"Amplified by heavily charred oak casks and peaty West Coast malts. Bonfire embers, dark roasted spices, and dark cocoa.",
+      accentColor:"#ca8a04", bgFrom:"#080808", bgTo:"#261704",
+      labelColor:"#18181b", glassColor:"#78350f", shape:"spirit" },
+    { id:105, brand:"Johnnie Walker", name:"Johnnie Walker Aged 18 Years", category:"Whisky", sub:"18 Year Old Master Blend", abv:"40%", volume:"750ml", price:74650,
+      notes:"Matured for 18 precious years. Intensely complex aromas of sweet compote, warm spice, creamy toffee, and velvety finish.",
+      accentColor:"#f59e0b", bgFrom:"#170e05", bgTo:"#3d1f08",
+      labelColor:"#e0a96d", glassColor:"#92400e", shape:"spirit" },
+    { id:106, brand:"Johnnie Walker", name:"Johnnie Walker Red Label", category:"Whisky", sub:"Pioneer Blended Scotch", abv:"43%", volume:"750ml", price:11450,
+      notes:"The pioneer blend that introduced Johnnie Walker to the world. Vibrant Speyside malts with flashes of cinnamon and apple crisp.",
+      accentColor:"#ef4444", bgFrom:"#1f0606", bgTo:"#450a0a",
+      labelColor:"#dc2626", glassColor:"#92400e", shape:"spirit" },
+    { id:107, brand:"Johnnie Walker", name:"Johnnie Walker Blonde", category:"Whisky", sub:"Sun-Kissed Vibrant Blend", abv:"40%", volume:"700ml", price:14800,
+      notes:"Bright American oak sweetness, bursting with lush toffee caramel, crisp berries, and sun-drenched citrus vanilla sparkle.",
+      accentColor:"#fbbf24", bgFrom:"#1c1202", bgTo:"#452c04",
+      labelColor:"#fbbf24", glassColor:"#d97706", shape:"spirit" },
+
+    /* ---- GRAND VINTAGES & WINES ---- */
+    { id:1,  name:"Château Margaux Grand Cru",     category:"Wine", sub:"Bordeaux Red Wine",     abv:"13.5%", volume:"750ml", price:28500,
+      notes:"Rich blackcurrant, cedar, and crushed violets with an exceptionally long, velvety finish.",
+      accentColor:"#8B0000", bgFrom:"#1a0000", bgTo:"#2d0a0a",
+      labelColor:"#F5E6D3", glassColor:"#4d1515", shape:"wine" },
+    { id:2,  name:"Domaine Écarlate Pinot Noir",    category:"Wine", sub:"Burgundy Pinot Noir",     abv:"13.5%", volume:"750ml", price:18200,
+      notes:"Bold dark cherries, wild forest strawberries, and French oak spice undertones.",
+      accentColor:"#722F37", bgFrom:"#1a0505", bgTo:"#2a0f14",
+      labelColor:"#E8D5C4", glassColor:"#5d2530", shape:"wine" },
+    { id:3,  name:"Maison Louis Jadot Chablis",     category:"Wine", sub:"Crisp White Chardonnay",   abv:"12.5%", volume:"750ml", price:16800,
+      notes:"Crisp green apple, Meyer lemon, and flinty mineral freshness with vibrant acidity.",
+      accentColor:"#C5B358", bgFrom:"#0a0a05", bgTo:"#1a1a0f",
+      labelColor:"#1a1a0f", glassColor:"#b4c96a", shape:"wine" },
+    { id:4,  name:"Miraval Côtes de Provence",   category:"Wine", sub:"French Estate Rosé",         abv:"13.0%", volume:"750ml", price:14200,
+      notes:"Delicate summer raspberries, white peach, and rose petal perfume with a bone-dry finish.",
+      accentColor:"#DB7093", bgFrom:"#1a0a10", bgTo:"#2a1520",
+      labelColor:"#FFF0F5", glassColor:"#d890a8", shape:"wine" },
+
+    /* ---- RARE SPIRITS & CEYLON ARRACK ---- */
+    { id:7,  name:"Belvedere Diamond Rye Vodka",       category:"Vodka",  sub:"Single-Estate Vodka", abv:"40%", volume:"750ml", price:18500,
+      notes:"Ultra-smooth with delicate notes of vanilla, toasted almond, and white pepper spice.",
+      accentColor:"#87CEEB", bgFrom:"#000510", bgTo:"#0a1020",
+      labelColor:"#E0F0FF", glassColor:"#90b8d0", shape:"spirit" },
+    { id:8,  name:"Ron Zacapa Centenario 23",      category:"Rum",    sub:"Solera Gran Reserva",      abv:"40%",volume:"750ml",price:29500,
+      notes:"Aged at high altitude. Honeyed butterscotch, spiced cocoa, raisins, and charred American oak.",
+      accentColor:"#D2691E", bgFrom:"#100500", bgTo:"#201005",
+      labelColor:"#FFF8DC", glassColor:"#8B4513", shape:"spirit" },
+    { id:9,  name:"Rockland Old Arrack Reserve",      category:"Arrack", sub:"Halmilla Aged Coconut Arrack", abv:"36.8%",volume:"750ml",price:8200,
+      notes:"Pure distilled coconut flower sap matured in seasoned Halmilla wood vats. Honey, toffee, and spice.",
+      accentColor:"#8B7355", bgFrom:"#0a0500", bgTo:"#1a1005",
+      labelColor:"#F5DEB3", glassColor:"#6B4226", shape:"spirit" },
+    { id:10, name:"Colombo No. 7 Handcrafted Gin",    category:"Gin",    sub:"London Dry Gin", abv:"43.4%", volume:"700ml", price:16400,
+      notes:"Distilled with Sri Lankan cinnamon bark, curry leaves, ginger root, and coriander.",
+      accentColor:"#2E8B57", bgFrom:"#000a05", bgTo:"#0a1a10",
+      labelColor:"#F0FFF0", glassColor:"#70b888", shape:"spirit" },
+
+    /* ---- CHILLED DRAUGHT & COLD CANS (BEERS) ---- */
+    { id:9001, name:"Heineken Original Lager",  category:"Beer", sub:"Premium European Lager",   abv:"5.0%", volume:"330ml", price:950,
+      notes:"World-renowned Dutch golden lager brewed with 100% pure malt and signature A-Yeast. Crisp, refreshing with subtle fruity green hop notes.",
+      accentColor:"#22c55e", bgFrom:"#021a0a", bgTo:"#053d16",
+      labelColor:"#16a34a", glassColor:"#15803d", shape:"beer-bottle" },
+    { id:9002, name:"Lion Lager",               category:"Beer", sub:"Sri Lankan Golden Lager",  abv:"4.8%", volume:"500ml", price:650,
+      notes:"Sri Lanka's iconic golden lager brewed in the central highlands since 1881 with roasted barley malt and Styrian hops.",
+      accentColor:"#eab308", bgFrom:"#1f1402", bgTo:"#3d2704",
+      labelColor:"#ca8a04", glassColor:"#b45309", shape:"can" },
+    { id:9003, name:"Carlsberg Danish Pilsner", category:"Beer", sub:"All-Malt Danish Pilsner",  abv:"5.0%", volume:"500ml", price:750,
+      notes:"Crafted in Copenhagen since 1847. Crisp, clean golden malt with aromatic European Saaz hops and subtle citrus aromas.",
+      accentColor:"#16a34a", bgFrom:"#021c0e", bgTo:"#063d1d",
+      labelColor:"#15803d", glassColor:"#166534", shape:"can" },
+    { id:9004, name:"Corona Extra",             category:"Beer", sub:"Cerveza Clara Especial",   abv:"4.5%", volume:"355ml", price:1150,
+      notes:"The quintessential beachside golden cerveza from Mexico. Sun-drenched golden color, smooth crisp palate best served with lime.",
+      accentColor:"#38bdf8", bgFrom:"#081d2e", bgTo:"#0f3a5c",
+      labelColor:"#0284c7", glassColor:"#eab308", shape:"beer-bottle" }
+  ];
+
+  /* Showcase groups: which products go in each sticky section */
+  const SHOWCASE_GROUPS = [
+    { label:"The House of Walker", products: PRODUCTS.filter(p => p.brand === "Johnnie Walker") },
+    { label:"Chilled Beers",       products: PRODUCTS.filter(p => p.category === "Beer") }
+  ];
+
+  /* ============================================
+     2. UTILITY FUNCTIONS
+     ============================================ */
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(v, lo, hi) { return Math.min(Math.max(v, lo), hi); }
+  function formatPrice(lkr) { return "Rs. " + lkr.toLocaleString("en-LK"); }
+  function smoothstep(edge0, edge1, x) {
+    var t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+
+  /* ============================================
+     3. APPLICATION STATE
+     ============================================ */
+  var state = {
+    cartItems: [],          /* [{productId, qty}] */
+    cartOpen: false,
+    ageVerified: false,
+    smoothScrollY: 0,       /* lerped scroll position */
+    activeShowcase: -1,     /* which showcase section is active, -1 = none */
+    activeProduct: null,    /* current product object */
+    lastProductId: -1,      /* track product swaps for Three.js */
+    reducedMotion: false,
+    webglOK: true,
+    scrollSections: []      /* cached DOM rects */
+  };
+
+  /* Check prefers-reduced-motion */
+  try {
+    state.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", function(e) {
+      state.reducedMotion = e.matches;
+    });
+  } catch(e) {}
+
+  /* ============================================
+     4. THREE.JS — SCENE SETUP
+     ============================================ */
+  var scene, camera, renderer;
+  var keyLight, rimLight, ambientLight;
+  var bottleGroup = null;
+  var shadowMesh = null;
+  var targetRotY = 0, currentRotY = 0;
+  var targetRotX = 0, currentRotX = 0;
+  var targetScale = 1, currentScale = 0.001;
+  var targetLightColor = null, targetRimColor = null;
+
+  function hasWebGL() {
+    try {
+      var c = document.createElement("canvas");
+      return !!(c.getContext("webgl2") || c.getContext("webgl") ||
+                c.getContext("experimental-webgl"));
+    } catch(e) { return false; }
+  }
+
+  function initThreeJS() {
+    if (!hasWebGL()) { state.webglOK = false; return; }
+
+    var container = document.getElementById("three-container");
+
+    /* Renderer */
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    renderer.shadowMap.enabled = false; /* use baked shadow instead */
+    container.appendChild(renderer.domElement);
+
+    /* Scene */
+    scene = new THREE.Scene();
+
+    /* Camera */
+    camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0.5, 10);
+    camera.lookAt(0, 0, 0);
+
+    /* Lights */
+    ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
+    scene.add(ambientLight);
+
+    keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    keyLight.position.set(4, 5, 5);
+    scene.add(keyLight);
+
+    rimLight = new THREE.DirectionalLight(0xc4a35a, 0.6);
+    rimLight.position.set(-4, 2, -3);
+    scene.add(rimLight);
+
+    /* Fill light from below for reflections */
+    var fillLight = new THREE.DirectionalLight(0x222244, 0.15);
+    fillLight.position.set(0, -3, 2);
+    scene.add(fillLight);
+
+    /* Create floor shadow */
+    shadowMesh = createFloorShadow();
+    scene.add(shadowMesh);
+
+    /* Resize handler */
+    window.addEventListener("resize", onResize);
+
+    /* Initialize light color targets */
+    targetLightColor = new THREE.Color(0xffffff);
+    targetRimColor = new THREE.Color(0xc4a35a);
+  }
+
+  function onResize() {
+    if (!renderer) return;
+    var w = window.innerWidth, h = window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+    /* Adjust camera distance on mobile */
+    camera.position.z = w < 768 ? 13 : 10;
+  }
+
+  function createFloorShadow() {
+    var canvas = document.createElement("canvas");
+    canvas.width = 256; canvas.height = 256;
+    var ctx = canvas.getContext("2d");
+    var g = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+    g.addColorStop(0, "rgba(0,0,0,0.4)");
+    g.addColorStop(0.6, "rgba(0,0,0,0.1)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 256, 256);
+    var tex = new THREE.CanvasTexture(canvas);
+    var geo = new THREE.PlaneGeometry(6, 6);
+    var mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
+    var mesh = new THREE.Mesh(geo, mat);
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.position.y = -3.8;
+    return mesh;
+  }
+
+  /* ============================================
+     5. PROCEDURAL BOTTLE GEOMETRY
+     ============================================ */
+  function getBottleProfile(shape) {
+    var pts = [];
+    var V2 = THREE.Vector2;
+    switch(shape) {
+      case "wine":
+        pts.push(new V2(0.001, 0));
+        pts.push(new V2(1.25,  0));
+        pts.push(new V2(1.35,  0.2));
+        pts.push(new V2(1.4,   0.6));
+        pts.push(new V2(1.4,   3.3));
+        pts.push(new V2(1.35,  3.7));
+        pts.push(new V2(1.15,  4.2));
+        pts.push(new V2(0.7,   4.8));
+        pts.push(new V2(0.48,  5.2));
+        pts.push(new V2(0.45,  6.4));
+        pts.push(new V2(0.5,   6.5));
+        pts.push(new V2(0.55,  6.55));
+        pts.push(new V2(0.55,  6.7));
+        pts.push(new V2(0.45,  6.75));
+        break;
+      case "spirit":
+        pts.push(new V2(0.001, 0));
+        pts.push(new V2(1.2,   0));
+        pts.push(new V2(1.3,   0.2));
+        pts.push(new V2(1.35,  0.6));
+        pts.push(new V2(1.35,  3.0));
+        pts.push(new V2(1.3,   3.4));
+        pts.push(new V2(1.05,  3.9));
+        pts.push(new V2(0.6,   4.6));
+        pts.push(new V2(0.45,  5.0));
+        pts.push(new V2(0.43,  6.6));
+        pts.push(new V2(0.48,  6.7));
+        pts.push(new V2(0.52,  6.75));
+        pts.push(new V2(0.52,  6.9));
+        pts.push(new V2(0.43,  6.95));
+        break;
+      case "beer-bottle":
+        pts.push(new V2(0.001, 0));
+        pts.push(new V2(1.15,  0));
+        pts.push(new V2(1.25,  0.15));
+        pts.push(new V2(1.25,  2.8));
+        pts.push(new V2(1.15,  3.2));
+        pts.push(new V2(0.75,  3.8));
+        pts.push(new V2(0.48,  4.2));
+        pts.push(new V2(0.45,  5.4));
+        pts.push(new V2(0.5,   5.5));
+        pts.push(new V2(0.55,  5.55));
+        pts.push(new V2(0.55,  5.65));
+        pts.push(new V2(0.45,  5.7));
+        break;
+      default: /* can — handled separately */
+        break;
+    }
+    return pts;
+  }
+
+  /* Bottle heights for positioning label and cap */
+  var BOTTLE_HEIGHTS = { "wine": 6.75, "spirit": 6.95, "beer-bottle": 5.7 };
+  var BOTTLE_BODY_RADIUS = { "wine": 1.4, "spirit": 1.35, "beer-bottle": 1.25 };
+  var BOTTLE_BODY_TOP = { "wine": 3.3, "spirit": 3.0, "beer-bottle": 2.8 };
+
+  function createLabelTexture(product) {
+    var canvas = document.createElement("canvas");
+    canvas.width = 1024; canvas.height = 512;
+    var ctx = canvas.getContext("2d");
+
+    /* Background */
+    ctx.fillStyle = product.labelColor || "#f5ede2";
+    ctx.fillRect(0, 0, 1024, 512);
+
+    var tc = getContrastText(product.labelColor || "#ffffff");
+
+    if (product.brand === "Johnnie Walker") {
+      /* Iconic 24-degree slanted sash label */
+      ctx.save();
+      ctx.translate(512, 256);
+      ctx.rotate(-24 * Math.PI / 180);
+
+      /* Black / dark background sash */
+      ctx.fillStyle = product.labelColor || "#111111";
+      ctx.fillRect(-600, -95, 1200, 190);
+
+      /* Radiant gold border */
+      ctx.strokeStyle = product.accentColor || "#d4af37";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(-600, -90, 1200, 180);
+
+      /* Brand mark */
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = product.accentColor || "#d4af37";
+      ctx.font = "bold 22px 'Inter', sans-serif";
+      ctx.fillText("JOHNNIE WALKER", 0, -52);
+
+      /* Variant name */
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 42px 'Playfair Display', Georgia, serif";
+      ctx.fillText(product.name.replace("Johnnie Walker ", "").toUpperCase(), 0, -2);
+
+      /* Sub category statement */
+      ctx.font = "italic 20px 'Playfair Display', Georgia, serif";
+      ctx.fillStyle = product.accentColor || "#d4af37";
+      ctx.fillText(product.sub, 0, 44);
+
+      ctx.restore();
+
+      /* Bottom ABV and Volume */
+      ctx.font = "600 22px 'Inter', sans-serif";
+      ctx.fillStyle = tc;
+      ctx.textAlign = "center";
+      ctx.fillText(product.abv + " ABV  •  " + product.volume, 512, 460);
+    } else {
+      /* Decorative border */
+      ctx.strokeStyle = tc;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(30, 30, 964, 452);
+      ctx.strokeRect(38, 38, 948, 436);
+
+      /* Product name */
+      ctx.fillStyle = tc;
+      ctx.font = "bold 60px 'Playfair Display', Georgia, serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      wrapText(ctx, product.name, 512, 160, 900, 68);
+
+      /* Decorative line */
+      ctx.strokeStyle = tc;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(312, 230); ctx.lineTo(712, 230); ctx.stroke();
+
+      /* Sub-category */
+      ctx.font = "italic 34px 'Playfair Display', Georgia, serif";
+      ctx.fillText(product.sub, 512, 270);
+
+      /* ABV + Volume */
+      ctx.font = "500 26px 'Inter', sans-serif";
+      ctx.fillStyle = tc;
+      ctx.globalAlpha = 0.7;
+      ctx.fillText(product.abv + " ABV  •  " + product.volume, 512, 340);
+      ctx.globalAlpha = 1;
+
+      /* Small decorative diamonds */
+      ctx.font = "18px serif";
+      ctx.fillText("◆  ◆  ◆", 512, 400);
+    }
+
+    var texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+  }
+
+  /* Simple contrast: parse hex and check luminance */
+  function getContrastText(hex) {
+    var c = hex.replace("#","");
+    if (c.length === 3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+    var r = parseInt(c.substr(0,2),16)/255;
+    var g = parseInt(c.substr(2,2),16)/255;
+    var b = parseInt(c.substr(4,2),16)/255;
+    var lum = 0.299*r + 0.587*g + 0.114*b;
+    return lum > 0.55 ? "#1a1008" : "#f5efe8";
+  }
+
+  /* Word-wrap helper for canvas */
+  function wrapText(ctx, text, x, y, maxW, lineH) {
+    var words = text.split(" ");
+    var line = "";
+    var lines = [];
+    for (var i = 0; i < words.length; i++) {
+      var test = line + words[i] + " ";
+      if (ctx.measureText(test).width > maxW && i > 0) {
+        lines.push(line.trim());
+        line = words[i] + " ";
+      } else { line = test; }
+    }
+    lines.push(line.trim());
+    var startY = y - ((lines.length - 1) * lineH) / 2;
+    for (var j = 0; j < lines.length; j++) {
+      ctx.fillText(lines[j], x, startY + j * lineH);
+    }
+  }
+
+  /* Build the complete bottle/can 3D group */
+  function createBottle(product) {
+    var group = new THREE.Group();
+
+    if (product.shape === "can") {
+      /* ---- CAN ---- */
+      var canH = 4.5, canR = 1.3;
+      var canGeo = new THREE.CylinderGeometry(canR, canR, canH, 64, 1, false);
+      var canMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(product.accentColor),
+        metalness: 0.85, roughness: 0.2
+      });
+      var canMesh = new THREE.Mesh(canGeo, canMat);
+      canMesh.position.y = canH / 2;
+      group.add(canMesh);
+
+      /* Can top (slightly inset) */
+      var topGeo = new THREE.CylinderGeometry(canR * 0.9, canR, 0.15, 64);
+      var topMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.9, roughness: 0.15 });
+      var top = new THREE.Mesh(topGeo, topMat);
+      top.position.y = canH + 0.075;
+      group.add(top);
+
+      /* Can bottom */
+      var botGeo = new THREE.CylinderGeometry(canR, canR * 0.95, 0.1, 64);
+      var botMat = new THREE.MeshStandardMaterial({ color: 0x999999, metalness: 0.9, roughness: 0.2 });
+      var bot = new THREE.Mesh(botGeo, botMat);
+      bot.position.y = 0.05;
+      group.add(bot);
+
+      /* Pull tab */
+      var tabGeo = new THREE.TorusGeometry(0.2, 0.04, 8, 16, Math.PI);
+      var tabMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.9, roughness: 0.15 });
+      var tab = new THREE.Mesh(tabGeo, tabMat);
+      tab.position.set(0, canH + 0.18, 0.15);
+      tab.rotation.x = Math.PI / 2;
+      group.add(tab);
+
+      /* Can label */
+      var labelGeo = new THREE.CylinderGeometry(canR + 0.02, canR + 0.02, canH * 0.6, 64, 1, true);
+      var labelTex = createLabelTexture(product);
+      var labelMat = new THREE.MeshStandardMaterial({
+        map: labelTex, side: THREE.DoubleSide, roughness: 0.6, metalness: 0.1
+      });
+      var label = new THREE.Mesh(labelGeo, labelMat);
+      label.position.y = canH * 0.5;
+      group.add(label);
+
+      /* Center vertically */
+      group.position.y = -canH / 2 - 0.3;
+
+    } else {
+      /* ---- BOTTLE (wine / spirit / beer-bottle) ---- */
+      var profile = getBottleProfile(product.shape);
+      if (profile.length === 0) return group;
+
+      var bottleH = BOTTLE_HEIGHTS[product.shape];
+      var bodyR = BOTTLE_BODY_RADIUS[product.shape];
+      var bodyTop = BOTTLE_BODY_TOP[product.shape];
+
+      /* Bottle body (glass) */
+      var bodyGeo = new THREE.LatheGeometry(profile, 64);
+      var glassMat = new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(product.glassColor),
+        metalness: 0.0,
+        roughness: 0.05,
+        transparent: true,
+        opacity: 0.4,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.02,
+        reflectivity: 1.0,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      var bodyMesh = new THREE.Mesh(bodyGeo, glassMat);
+      group.add(bodyMesh);
+
+      /* Inner dark core for depth */
+      var innerGeo = new THREE.LatheGeometry(
+        profile.map(function(p) { return new THREE.Vector2(p.x * 0.92, p.y); }),
+        32
+      );
+      var innerMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(product.glassColor).multiplyScalar(0.2),
+        roughness: 0.9, metalness: 0, transparent: true, opacity: 0.6,
+        side: THREE.BackSide
+      });
+      var innerMesh = new THREE.Mesh(innerGeo, innerMat);
+      group.add(innerMesh);
+
+      /* Liquid fill (partial cylinder inside the bottle) */
+      var liquidH = bodyTop * 0.85;
+      var liquidR = bodyR * 0.88;
+      var liquidGeo = new THREE.CylinderGeometry(liquidR, liquidR, liquidH, 32);
+      var liquidMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(product.glassColor),
+        transparent: true, opacity: 0.55,
+        roughness: 0.4, metalness: 0.0
+      });
+      var liquid = new THREE.Mesh(liquidGeo, liquidMat);
+      liquid.position.y = liquidH / 2 + 0.15;
+      group.add(liquid);
+
+      /* Label (cylinder wrapped around body) */
+      var labelH = bodyTop * 0.55;
+      var labelR = bodyR + 0.025;
+      var labelGeo = new THREE.CylinderGeometry(labelR, labelR, labelH, 64, 1, true);
+      var labelTex = createLabelTexture(product);
+      var labelMat = new THREE.MeshStandardMaterial({
+        map: labelTex, side: THREE.DoubleSide,
+        roughness: 0.7, metalness: 0.0
+      });
+      var labelMesh = new THREE.Mesh(labelGeo, labelMat);
+      labelMesh.position.y = bodyTop * 0.35 + labelH / 2;
+      group.add(labelMesh);
+
+      /* Cap / cork */
+      var capMesh = createCap(product);
+      if (capMesh) { group.add(capMesh); }
+
+      /* Center vertically */
+      group.position.y = -bottleH / 2;
+    }
+
+    return group;
+  }
+
+  function createCap(product) {
+    var mesh;
+    if (product.shape === "wine") {
+      /* Foil + cork top */
+      var foilGeo = new THREE.CylinderGeometry(0.48, 0.55, 0.8, 32);
+      var foilMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(product.accentColor).multiplyScalar(1.2),
+        metalness: 0.6, roughness: 0.3
+      });
+      mesh = new THREE.Mesh(foilGeo, foilMat);
+      mesh.position.y = BOTTLE_HEIGHTS["wine"] + 0.35;
+    } else if (product.shape === "spirit") {
+      var capGeo = new THREE.CylinderGeometry(0.52, 0.48, 0.7, 32);
+      var capMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(product.accentColor),
+        metalness: 0.8, roughness: 0.2
+      });
+      mesh = new THREE.Mesh(capGeo, capMat);
+      mesh.position.y = BOTTLE_HEIGHTS["spirit"] + 0.3;
+    } else if (product.shape === "beer-bottle") {
+      /* Crown cap */
+      var crownGeo = new THREE.CylinderGeometry(0.58, 0.52, 0.18, 16);
+      var crownMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(product.accentColor),
+        metalness: 0.85, roughness: 0.2
+      });
+      mesh = new THREE.Mesh(crownGeo, crownMat);
+      mesh.position.y = BOTTLE_HEIGHTS["beer-bottle"] + 0.05;
+    }
+    return mesh || null;
+  }
+
+  function disposeGroup(group) {
+    if (!group) return;
+    group.traverse(function(child) {
+      if (child.geometry) child.geometry.dispose();
+      if (child.material) {
+        if (child.material.map) child.material.map.dispose();
+        child.material.dispose();
+      }
+    });
+  }
+
+  function swapBottle(product) {
+    if (!scene || !product) return;
+    if (product.id === state.lastProductId) return;
+    state.lastProductId = product.id;
+
+    /* Remove old */
+    if (bottleGroup) {
+      disposeGroup(bottleGroup);
+      scene.remove(bottleGroup);
+      bottleGroup = null;
+    }
+
+    /* Create new */
+    bottleGroup = createBottle(product);
+    scene.add(bottleGroup);
+
+    /* Target light colors */
+    var accent = new THREE.Color(product.accentColor);
+    targetLightColor = new THREE.Color(0xffffff).lerp(accent, 0.25);
+    targetRimColor = accent.clone();
+  }
+
+
+  /* ============================================
+     6. SCROLL MECHANICS
+     ============================================ */
+  var showcaseEls = []; /* cached DOM elements */
+
+  function cacheShowcaseSections() {
+    showcaseEls = [];
+    var els = document.querySelectorAll(".showcase");
+    for (var i = 0; i < els.length; i++) {
+      showcaseEls.push(els[i]);
+    }
+  }
+
+  function getShowcaseProgress(el) {
+    var rect = el.getBoundingClientRect();
+    var sectionH = el.offsetHeight;
+    var vh = window.innerHeight;
+    var scrolled = -rect.top;
+    var scrollable = sectionH - vh;
+    if (scrollable <= 0) return 0;
+    return clamp(scrolled / scrollable, 0, 1);
+  }
+
+  function isInView(el) {
+    var rect = el.getBoundingClientRect();
+    return rect.top < window.innerHeight && rect.bottom > 0;
+  }
+
+  function updateScrollState() {
+    var scrollY = window.scrollY || window.pageYOffset;
+
+    /* Lerp the smooth scroll value */
+    var lerpFactor = state.reducedMotion ? 1 : 0.1;
+    state.smoothScrollY += (scrollY - state.smoothScrollY) * lerpFactor;
+
+    /* Find active showcase */
+    state.activeShowcase = -1;
+    state.activeProduct = null;
+
+    for (var i = 0; i < showcaseEls.length; i++) {
+      if (!isInView(showcaseEls[i])) continue;
+
+      var progress = getShowcaseProgress(showcaseEls[i]);
+      var group = SHOWCASE_GROUPS[i];
+      var n = group.products.length;
+
+      /* Which product in this group? */
+      var rawIdx = progress * n;
+      var prodIdx = Math.min(Math.floor(rawIdx), n - 1);
+      var localProgress = clamp(rawIdx - prodIdx, 0, 1);
+
+      state.activeShowcase = i;
+      state.activeProduct = group.products[prodIdx];
+
+      /* Drive 3D rotation from smoothed scroll */
+      if (!state.reducedMotion) {
+        /* Elegant 3D perspective tilt (keeps bottle facing forward with realistic 3D depth) */
+        targetRotY = (localProgress - 0.5) * 0.45;
+        /* Slight X tilt for realism */
+        targetRotX = Math.sin(localProgress * Math.PI) * 0.08 - 0.03;
+      } else {
+        targetRotY = 0;
+        targetRotX = 0.05;
+      }
+
+      /* Dynamic key light orbit and rim light color shift */
+      if (keyLight && rimLight && state.activeProduct) {
+        var lightAngle = localProgress * Math.PI * 2 + Math.PI / 4;
+        keyLight.position.x = Math.sin(lightAngle) * 5;
+        keyLight.position.z = Math.cos(lightAngle) * 5;
+        var accentCol = new THREE.Color(state.activeProduct.accentColor);
+        targetRimColor = accentCol.clone();
+        targetLightColor = new THREE.Color(0xffffff).lerp(accentCol, 0.25);
+      }
+
+      /* Update background */
+      var bgEl = document.getElementById("showcase-bg-" + i);
+      if (bgEl && state.activeProduct) {
+        bgEl.style.background = "radial-gradient(ellipse at 50% 60%, " +
+          state.activeProduct.bgTo + " 0%, " +
+          state.activeProduct.bgFrom + " 100%)";
+      }
+
+      /* Update glow */
+      var glowEl = document.getElementById("showcase-glow-" + i);
+      if (glowEl && state.activeProduct) {
+        glowEl.style.background = "radial-gradient(circle, " +
+          state.activeProduct.accentColor + "22 0%, transparent 70%)";
+      }
+
+      /* Update product text */
+      updateProductText(i, prodIdx, localProgress, group);
+
+      break; /* only process one active showcase */
+    }
+
+    /* Show/hide three.js canvas */
+    var container = document.getElementById("three-container");
+    if (state.activeShowcase >= 0) {
+      container.classList.add("visible");
+      swapBottle(state.activeProduct);
+      targetScale = window.innerWidth < 768 ? 0.7 : 1;
+    } else {
+      container.classList.remove("visible");
+      targetScale = 0.001;
+    }
+
+    /* Navbar scroll state */
+    var navbar = document.getElementById("navbar");
+    if (scrollY > 80) { navbar.classList.add("scrolled"); }
+    else { navbar.classList.remove("scrolled"); }
+  }
+
+  /* ============================================
+     7. PRODUCT TEXT ANIMATIONS
+     ============================================ */
+  function buildProductTextHTML(sectionIdx, group) {
+    var container = document.getElementById("product-text-" + sectionIdx);
+    if (!container) return;
+    var html = "";
+    for (var i = 0; i < group.products.length; i++) {
+      var p = group.products[i];
+      html += '<div class="product-text-inner" data-pidx="' + i + '">' +
+        '<div class="product-text-left" id="pt-left-' + sectionIdx + '-' + i + '">' +
+          '<span class="pt-category">' + p.sub + '</span>' +
+          '<h2 class="pt-name">' + p.name + '</h2>' +
+          '<p class="pt-notes">' + p.notes + '</p>' +
+          '<span class="pt-meta">' + p.abv + ' &bull; ' + p.volume + '</span>' +
+        '</div>' +
+        '<div class="product-text-right" id="pt-right-' + sectionIdx + '-' + i + '">' +
+          '<span class="pt-price">' + formatPrice(p.price) + '</span>' +
+          '<button class="pt-add-btn" onclick="addToCart(' + p.id + ')" ' +
+            'aria-label="Add ' + p.name + ' to cart">Add to Cart</button>' +
+        '</div>' +
+      '</div>';
+    }
+    container.innerHTML = html;
+  }
+
+  function updateProductText(sectionIdx, activeIdx, localProgress, group) {
+    for (var i = 0; i < group.products.length; i++) {
+      var left = document.getElementById("pt-left-" + sectionIdx + "-" + i);
+      var right = document.getElementById("pt-right-" + sectionIdx + "-" + i);
+      if (!left || !right) continue;
+
+      if (i === activeIdx) {
+        /* Fade in at 0–0.15, full at 0.15–0.8, fade out at 0.8–1 */
+        var fadeIn = smoothstep(0, 0.15, localProgress);
+        var fadeOut = 1 - smoothstep(0.8, 1, localProgress);
+        var opacity = Math.min(fadeIn, fadeOut);
+        var slideY = (1 - fadeIn) * 30 + (1 - fadeOut) * -30;
+
+        left.style.opacity = opacity;
+        left.style.transform = "translateY(" + slideY + "px)";
+        right.style.opacity = opacity;
+        right.style.transform = "translateY(" + (slideY * 0.7) + "px)";
+        left.classList.toggle("visible", opacity > 0.01);
+        right.classList.toggle("visible", opacity > 0.01);
+      } else {
+        left.style.opacity = 0;
+        right.style.opacity = 0;
+        left.classList.remove("visible");
+        right.classList.remove("visible");
+      }
+    }
+  }
+
+  /* ============================================
+     8. ANIMATION LOOP (Three.js + scroll lerp)
+     ============================================ */
+  function animateLoop() {
+    requestAnimationFrame(animateLoop);
+    updateScrollState();
+
+    if (!renderer || !scene || !camera) return;
+
+    /* Lerp bottle rotation */
+    var rotLerp = state.reducedMotion ? 1 : 0.08;
+    currentRotY += (targetRotY - currentRotY) * rotLerp;
+    currentRotX += (targetRotX - currentRotX) * rotLerp;
+    currentScale += (targetScale - currentScale) * 0.1;
+
+    if (bottleGroup) {
+      bottleGroup.rotation.y = currentRotY;
+      bottleGroup.rotation.x = currentRotX;
+      bottleGroup.scale.setScalar(currentScale);
+    }
+    if (shadowMesh) {
+      shadowMesh.scale.setScalar(currentScale);
+    }
+
+    /* Lerp light colors */
+    if (targetLightColor && keyLight) {
+      keyLight.color.lerp(targetLightColor, 0.05);
+    }
+    if (targetRimColor && rimLight) {
+      rimLight.color.lerp(targetRimColor, 0.05);
+    }
+
+    /* Animate key light position for rim shift */
+    var t = currentRotY * 0.3;
+    keyLight.position.x = Math.sin(t) * 5;
+    keyLight.position.z = Math.cos(t) * 5;
+
+    renderer.render(scene, camera);
+  }
+
+  /* ============================================
+     9. COLLECTION GRID
+     ============================================ */
+  var currentFilter = "all";
+  var currentSearch = "";
+
+  function buildFilterBar() {
+    var bar = document.getElementById("filter-bar");
+    var cats = ["all", "Wine", "Whisky", "Vodka", "Rum", "Arrack", "Gin", "Beer"];
+    var html = "";
+    for (var i = 0; i < cats.length; i++) {
+      var c = cats[i];
+      var label = c === "all" ? "All" : c;
+      html += '<button class="filter-tab' + (c === currentFilter ? ' active' : '') +
+        '" data-filter="' + c + '" onclick="setFilter(\'' + c + '\')" ' +
+        'role="tab" aria-selected="' + (c === currentFilter) + '">' + label + '</button>';
+    }
+    html += '<input type="text" class="search-input" id="search-input" ' +
+      'placeholder="Search products…" oninput="setSearch(this.value)" ' +
+      'aria-label="Search products" />';
+    bar.innerHTML = html;
+  }
+
+  function setFilter(cat) {
+    currentFilter = cat;
+    buildFilterBar();
+    renderCollectionGrid();
+  }
+
+  function setSearch(term) {
+    currentSearch = term;
+    renderCollectionGrid();
+  }
+
+  function getBottleSVG(shape) {
+    switch(shape) {
+      case "wine":
+        return '<svg viewBox="0 0 40 100" fill="currentColor" aria-hidden="true">' +
+          '<path d="M18 98 L18 92 Q6 88 6 78 L6 35 Q6 25 14 18 L14 8 Q14 4 17 4 L23 4 Q26 4 26 8 L26 18 Q34 25 34 35 L34 78 Q34 88 22 92 L22 98 Z"/></svg>';
+      case "spirit":
+        return '<svg viewBox="0 0 40 100" fill="currentColor" aria-hidden="true">' +
+          '<path d="M15 98 L15 92 Q6 88 6 80 L6 38 Q6 28 12 22 L15 18 L15 8 Q15 4 18 4 L22 4 Q25 4 25 8 L25 18 L28 22 Q34 28 34 38 L34 80 Q34 88 25 92 L25 98 Z"/></svg>';
+      case "beer-bottle":
+        return '<svg viewBox="0 0 40 85" fill="currentColor" aria-hidden="true">' +
+          '<path d="M16 82 L16 76 Q8 73 8 65 L8 30 Q8 22 14 17 L14 8 Q14 4 17 4 L23 4 Q26 4 26 8 L26 17 Q32 22 32 30 L32 65 Q32 73 24 76 L24 82 Z"/></svg>';
+      case "can":
+        return '<svg viewBox="0 0 40 60" fill="currentColor" aria-hidden="true">' +
+          '<rect x="8" y="6" width="24" height="48" rx="4"/>' +
+          '<ellipse cx="20" cy="6" rx="12" ry="4"/>' +
+          '<ellipse cx="20" cy="54" rx="12" ry="4"/>' +
+          '<circle cx="20" cy="4" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+      default:
+        return '';
+    }
+  }
+
+  function renderCollectionGrid() {
+    var filtered = PRODUCTS;
+    if (currentFilter !== "all") {
+      filtered = filtered.filter(function(p) { return p.category === currentFilter; });
+    }
+    if (currentSearch) {
+      var s = currentSearch.toLowerCase();
+      filtered = filtered.filter(function(p) {
+        return p.name.toLowerCase().indexOf(s) >= 0 ||
+               p.category.toLowerCase().indexOf(s) >= 0 ||
+               p.sub.toLowerCase().indexOf(s) >= 0 ||
+               p.notes.toLowerCase().indexOf(s) >= 0;
+      });
+    }
+
+    var grid = document.getElementById("collection-grid");
+    if (filtered.length === 0) {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--color-text-dim);padding:3rem 0;">No products found.</p>';
+      return;
+    }
+
+    var html = "";
+    for (var i = 0; i < filtered.length; i++) {
+      var p = filtered[i];
+      html += '<article class="product-card" role="listitem" ' +
+        'style="--accent:' + p.accentColor + '" ' +
+        'onmousemove="handleCardTilt(event,this)" onmouseleave="resetCardTilt(this)">' +
+        '<div class="card-visual" style="background:linear-gradient(135deg,' + p.bgFrom + ',' + p.bgTo + ')">' +
+          '<div class="card-bottle-icon" style="color:' + p.accentColor + '">' + getBottleSVG(p.shape) + '</div>' +
+        '</div>' +
+        '<div class="card-info">' +
+          '<span class="card-category">' + p.sub + '</span>' +
+          '<h3 class="card-name">' + p.name + '</h3>' +
+          '<p class="card-notes">' + p.notes + '</p>' +
+          '<div class="card-meta">' +
+            '<span>' + p.abv + ' &bull; ' + p.volume + '</span>' +
+            '<span class="card-price">' + formatPrice(p.price) + '</span>' +
+          '</div>' +
+          '<button class="add-to-cart-btn" onclick="addToCart(' + p.id + ')" ' +
+            'aria-label="Add ' + p.name + ' to cart">Add to Cart</button>' +
+        '</div>' +
+      '</article>';
+    }
+    grid.innerHTML = html;
+  }
+
+  function handleCardTilt(e, card) {
+    if (state.reducedMotion) return;
+    var rect = card.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    var cx = rect.width / 2;
+    var cy = rect.height / 2;
+    var rx = ((y - cy) / cy) * -6;
+    var ry = ((x - cx) / cx) * 6;
+    card.style.transform = "perspective(800px) rotateX(" + rx + "deg) rotateY(" + ry + "deg) scale(1.02)";
+  }
+
+  function resetCardTilt(card) {
+    card.style.transform = "";
+  }
+
+  /* ============================================
+     10. CART SYSTEM
+     ============================================ */
+  function addToCart(productId) {
+    var existing = null;
+    for (var i = 0; i < state.cartItems.length; i++) {
+      if (state.cartItems[i].productId === productId) {
+        existing = state.cartItems[i]; break;
+      }
+    }
+    if (existing) { existing.qty++; }
+    else { state.cartItems.push({ productId: productId, qty: 1 }); }
+    saveCart(); renderCartUI();
+    /* Quick flash feedback */
+    if (!state.cartOpen) {
+      var countEl = document.getElementById("cart-count");
+      countEl.style.transform = "scale(1.4)";
+      setTimeout(function() { countEl.style.transform = "scale(1)"; }, 200);
+    }
+  }
+
+  function removeFromCart(productId) {
+    state.cartItems = state.cartItems.filter(function(it) { return it.productId !== productId; });
+    saveCart(); renderCartUI();
+  }
+
+  function updateQty(productId, delta) {
+    for (var i = 0; i < state.cartItems.length; i++) {
+      if (state.cartItems[i].productId === productId) {
+        state.cartItems[i].qty += delta;
+        if (state.cartItems[i].qty <= 0) { removeFromCart(productId); return; }
+        break;
+      }
+    }
+    saveCart(); renderCartUI();
+  }
+
+  function getCartTotal() {
+    var total = 0;
+    for (var i = 0; i < state.cartItems.length; i++) {
+      var item = state.cartItems[i];
+      var prod = PRODUCTS.find(function(p) { return p.id === item.productId; });
+      if (prod) total += prod.price * item.qty;
+    }
+    return total;
+  }
+
+  function getCartCount() {
+    var count = 0;
+    for (var i = 0; i < state.cartItems.length; i++) { count += state.cartItems[i].qty; }
+    return count;
+  }
+
+  function saveCart() {
+    try { sessionStorage.setItem("winestore_cart", JSON.stringify(state.cartItems)); } catch(e) {}
+  }
+
+  function loadCart() {
+    try {
+      var saved = sessionStorage.getItem("winestore_cart");
+      if (saved) state.cartItems = JSON.parse(saved);
+    } catch(e) {}
+  }
+
+  function toggleCart() {
+    state.cartOpen = !state.cartOpen;
+    document.getElementById("cart-drawer").classList.toggle("open", state.cartOpen);
+    document.getElementById("cart-overlay").classList.toggle("open", state.cartOpen);
+    document.body.classList.toggle("no-scroll", state.cartOpen);
+    if (state.cartOpen) renderCartUI();
+  }
+
+  function renderCartUI() {
+    /* Count badge */
+    var count = getCartCount();
+    var countEl = document.getElementById("cart-count");
+    countEl.textContent = count;
+    countEl.classList.toggle("visible", count > 0);
+
+    /* Drawer content */
+    var itemsEl = document.getElementById("cart-items");
+    var footerEl = document.getElementById("cart-footer");
+
+    if (state.cartItems.length === 0) {
+      itemsEl.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+      footerEl.innerHTML = '';
+      return;
+    }
+
+    var html = "";
+    for (var i = 0; i < state.cartItems.length; i++) {
+      var item = state.cartItems[i];
+      var prod = PRODUCTS.find(function(p) { return p.id === item.productId; });
+      if (!prod) continue;
+      html += '<div class="cart-item">' +
+        '<div class="cart-item-color" style="background:linear-gradient(135deg,' +
+          prod.bgFrom + ',' + prod.bgTo + ');border:1px solid ' + prod.accentColor + '33"></div>' +
+        '<div class="cart-item-info">' +
+          '<div class="cart-item-name">' + prod.name + '</div>' +
+          '<div class="cart-item-price">' + formatPrice(prod.price) + '</div>' +
+        '</div>' +
+        '<div class="cart-item-qty">' +
+          '<button class="qty-btn" onclick="updateQty(' + prod.id + ',-1)" aria-label="Decrease quantity">−</button>' +
+          '<span class="qty-num">' + item.qty + '</span>' +
+          '<button class="qty-btn" onclick="updateQty(' + prod.id + ',1)" aria-label="Increase quantity">+</button>' +
+        '</div>' +
+      '</div>';
+    }
+    itemsEl.innerHTML = html;
+
+    footerEl.innerHTML =
+      '<div class="cart-total">' +
+        '<span class="cart-total-label">Total</span>' +
+        '<span class="cart-total-value">' + formatPrice(getCartTotal()) + '</span>' +
+      '</div>' +
+      '<button class="cart-checkout-btn" onclick="alert(\'WhatsApp ordering coming soon!\')" ' +
+        'aria-label="Proceed to checkout">Order via WhatsApp</button>';
+  }
+
+  /* ============================================
+     11. AGE GATE
+     ============================================ */
+  function checkAgeGate() {
+    try { return sessionStorage.getItem("winestore_age") === "verified"; }
+    catch(e) { return false; }
+  }
+
+  function showAgeGate() {
+    if (checkAgeGate()) { state.ageVerified = true; return; }
+    document.getElementById("age-gate").classList.add("active");
+    document.body.classList.add("no-scroll");
+  }
+
+  function verifyAge(isAdult) {
+    if (isAdult) {
+      state.ageVerified = true;
+      try { sessionStorage.setItem("winestore_age", "verified"); } catch(e) {}
+      document.getElementById("age-gate").classList.remove("active");
+      document.body.classList.remove("no-scroll");
+    } else {
+      /* Redirect away politely */
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;' +
+        'height:100vh;text-align:center;font-family:var(--font-display);padding:2rem;">' +
+        '<div><h2 style="margin-bottom:1rem;">Sorry!</h2>' +
+        '<p style="color:#999;">You must be 18 or older to access this site.</p></div></div>';
+    }
+  }
+
+  /* ============================================
+     12. MOBILE NAV
+     ============================================ */
+  function toggleMobileNav() {
+    var links = document.getElementById("nav-links");
+    var btn = document.getElementById("nav-hamburger");
+    var open = links.classList.toggle("mobile-open");
+    btn.setAttribute("aria-expanded", open);
+  }
+
+  /* Close mobile nav on link click */
+  document.addEventListener("click", function(e) {
+    if (e.target.closest && e.target.closest(".nav-links a")) {
+      var links = document.getElementById("nav-links");
+      links.classList.remove("mobile-open");
+      document.getElementById("nav-hamburger").setAttribute("aria-expanded", "false");
+    }
+  });
+
+  /* ============================================
+     13. INITIALIZATION
+     ============================================ */
+  function init() {
+    /* Age gate */
+    showAgeGate();
+
+    /* Load cart from session */
+    loadCart();
+    renderCartUI();
+
+    /* Init Three.js */
+    initThreeJS();
+    if (state.webglOK) { onResize(); }
+
+    /* Cache showcase sections */
+    cacheShowcaseSections();
+
+    /* Build product text for each showcase */
+    for (var i = 0; i < SHOWCASE_GROUPS.length; i++) {
+      buildProductTextHTML(i, SHOWCASE_GROUPS[i]);
+    }
+
+    /* Build collection */
+    buildFilterBar();
+    renderCollectionGrid();
+
+    /* Start animation loop */
+    animateLoop();
+  }
+
+  /* Wait for DOM */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+  </script>
+</body>
+</html>
