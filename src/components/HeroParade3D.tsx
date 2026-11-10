@@ -181,7 +181,12 @@ const CarouselBottle: React.FC<CarouselBottleProps> = ({
             onClickBottle(index);
           }
         }}
-        cursor="pointer"
+        onPointerOver={() => {
+          if (typeof document !== "undefined") document.body.style.cursor = "pointer";
+        }}
+        onPointerOut={() => {
+          if (typeof document !== "undefined") document.body.style.cursor = "auto";
+        }}
       >
         <mesh geometry={curvedGeometry} castShadow>
           <meshPhysicalMaterial
